@@ -13,3 +13,5 @@ autoresearch/model/
 data/repos_text.jsonl
 data/add_text.log
 models/text_artifact/
+models/text_dl/
+serving/*.log

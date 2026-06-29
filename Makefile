@@ -1,10 +1,17 @@
 # Hopsworks terminals have python on PATH. Override with `make PY=/path/to/python <target>`.
 PY := python
 
-.PHONY: collect features eda train sync-app app deploy-app clean
+.PHONY: collect text features eda train serve-model sync-app app deploy-app clean
 
 collect:          ## Pull labelled README dataset from GitHub (needs gh auth)
 	$(PY) collect/collect.py
+
+text:             ## Re-fetch raw README text for each repo (needs gh auth)
+	$(PY) collect/add_text.py
+
+serve-model:      ## Build + register the text model, deploy to a KServe endpoint
+	$(PY) serving/register_text.py
+	$(PY) serving/deploy_text.py
 
 features:         ## Load dataset into the feature group (Hopsworks job)
 	-hops files mkdir Resources/vaporware
