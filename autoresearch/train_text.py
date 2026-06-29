@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 # ============================ EXPERIMENT (edit me) ============================
-EXP_DESC = "TF-IDF(1,2) + counts -> LogReg"
+EXP_DESC = "TF-IDF word(1,2)+char(3,5) + counts -> LogReg C2"
 
 
 def build_model(text_col, num_cols):
@@ -29,15 +29,19 @@ def build_model(text_col, num_cols):
     from sklearn.linear_model import LogisticRegression
 
     pre = ColumnTransformer([
-        ("txt", TfidfVectorizer(lowercase=True, ngram_range=(1, 2),
-                                min_df=5, max_features=20000,
-                                sublinear_tf=True, strip_accents="unicode"),
+        ("word", TfidfVectorizer(lowercase=True, ngram_range=(1, 2),
+                                 min_df=5, max_features=30000,
+                                 sublinear_tf=True, strip_accents="unicode"),
+         text_col),
+        ("char", TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5),
+                                 min_df=5, max_features=30000,
+                                 sublinear_tf=True),
          text_col),
         ("num", make_pipeline(StandardScaler()), num_cols),
     ])
     return Pipeline([
         ("pre", pre),
-        ("clf", LogisticRegression(C=1.0, max_iter=3000, random_state=42)),
+        ("clf", LogisticRegression(C=2.0, max_iter=4000, random_state=42)),
     ])
 # ========================== end experiment section ===========================
 
