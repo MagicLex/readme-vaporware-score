@@ -19,12 +19,16 @@ import numpy as np
 import pandas as pd
 
 # ============================ EXPERIMENT (edit me) ============================
-EXP_DESC = "soft-vote XGB + RF + LogReg (log1p)"
+EXP_DESC = "ensemble, drop near-zero-signal features"
+
+_DROP = ["fire_count", "sparkles_count", "rocket_count", "wip_marker_count",
+         "emoji_per_1k_chars", "buzzword_per_1k_words", "exclamation_per_1k_words",
+         "has_install_section"]
 
 
 def engineer_features(X: pd.DataFrame) -> pd.DataFrame:
     """Transform the raw README feature frame. Return a numeric DataFrame."""
-    return np.log1p(X)  # harmless for trees (monotonic), helps the linear member
+    return np.log1p(X.drop(columns=[c for c in _DROP if c in X.columns]))
 
 
 def build_model():
