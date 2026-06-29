@@ -2,6 +2,11 @@
 
 ![README Vaporware Score](assets/banner.svg)
 
+[![awesome-ml-systems](https://img.shields.io/badge/awesome--ml--systems-%23001-34d399?labelColor=0b0e11&style=flat)](https://github.com/MagicLex/awesome-ml-systems)
+[![Hopsworks](https://img.shields.io/badge/built_on-Hopsworks-1CB182?labelColor=0b0e11&style=flat)](https://www.hopsworks.ai/)
+
+One small ML system per day on Hopsworks.
+
 Can you predict whether a GitHub repo gets abandoned from its README alone?
 Emoji count, badge density, "🚀 blazingly fast" frequency, the actual words.
 
