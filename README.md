@@ -1,5 +1,7 @@
 # README Vaporware Score
 
+![README Vaporware Score](assets/banner.svg)
+
 Can you predict whether a GitHub repo gets abandoned from its README alone?
 Emoji count, badge density, "🚀 blazingly fast" frequency, the actual words.
 
@@ -81,6 +83,34 @@ Read these before quoting the number anywhere.
 
 An FTI (feature, training, inference) system on Hopsworks.
 
+```mermaid
+flowchart LR
+    src([GitHub API]):::ext
+
+    subgraph FE[Feature]
+        direction TB
+        col[collect] --> fp[feature pipeline] --> fg[(Feature Group)]:::hops
+    end
+    subgraph TR[Training]
+        direction TB
+        fv[Feature View] --> search[train / autoresearch] --> reg[(Model Registry)]:::hops
+    end
+    subgraph INF[Inference]
+        direction TB
+        ks[KServe endpoint]:::hops --> app[scorer app]
+    end
+
+    src --> col
+    fg --> fv
+    reg --> ks
+    user([paste a README]):::ext --> app --> ks
+
+    classDef hops fill:#10b98122,stroke:#34d399,color:#e5e7eb;
+    classDef ext fill:none,stroke:#6b7280,color:#9ca3af,stroke-dasharray:4 3;
+```
+
+The file-by-file map:
+
 ```
 collect/collect.py            GitHub API -> data/repos.jsonl            (terminal, I/O bound)
 collect/add_text.py           re-fetch raw README text for each repo    (terminal, I/O bound)
@@ -141,3 +171,5 @@ versions. No names are hardcoded to one user or project.
 Paste a README (or a GitHub URL), get a 0 to 100 score. Lower is better. It reads
 your actual words, not just your badge count, and it has opinions. Do not take it
 personally. Take it a little personally.
+
+![The scorer app](assets/demo.jpg)
