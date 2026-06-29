@@ -19,21 +19,23 @@ import numpy as np
 import pandas as pd
 
 # ============================ EXPERIMENT (edit me) ============================
-EXP_DESC = "XGBoost n400 depth3 lr0.03 subsample0.8 colsample0.8"
+EXP_DESC = "LogReg + log1p + StandardScaler (C tuned via CV)"
 
 
 def engineer_features(X: pd.DataFrame) -> pd.DataFrame:
     """Transform the raw README feature frame. Return a numeric DataFrame."""
-    return X
+    return np.log1p(X)  # counts are heavy-tailed; log helps linear models
 
 
 def build_model():
     """Return an unfitted sklearn-compatible estimator with predict_proba."""
-    from xgboost import XGBClassifier
-    return XGBClassifier(
-        n_estimators=400, max_depth=3, learning_rate=0.03,
-        subsample=0.8, colsample_bytree=0.8, reg_lambda=1.0,
-        eval_metric="logloss", random_state=42, n_jobs=-1,
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.linear_model import LogisticRegressionCV
+    return make_pipeline(
+        StandardScaler(),
+        LogisticRegressionCV(Cs=10, cv=5, scoring="roc_auc",
+                             max_iter=2000, random_state=42),
     )
 # ========================== end experiment section ===========================
 
