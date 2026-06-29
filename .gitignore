@@ -7,3 +7,6 @@ data/collect.log
 .ipynb_checkpoints/
 
 logs-job-*
+autoresearch/data_cache.parquet
+autoresearch/run.log
+autoresearch/model/
