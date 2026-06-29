@@ -89,6 +89,15 @@ The feature extraction in `readme_features.py` is the single source of truth: th
 collector and the app call the same `extract()`, and the model carries its own
 feature order in `feature_names_in_`, so there is no training/serving skew.
 
+## Model optimization
+
+An autonomous model-search run (Karpathy autoresearch style) lives in
+[`autoresearch/`](autoresearch/), with a leaderboard feature group and a model
+registry version per kept experiment. It compares two feature approaches: README
+structure as counts (this repo's baseline) and raw README text (TF-IDF). See
+[`autoresearch/README.md`](autoresearch/README.md) for the leaderboard and the
+head-to-head.
+
 ## Reproduce
 
 Clone this repo into a Hopsworks project (any personal project works; the FUSE

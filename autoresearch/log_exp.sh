@@ -17,9 +17,9 @@ fi
 SHA=$(git rev-parse --short HEAD)
 TS=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
-printf '[{"commit":"%s","val_metric":%s,"peak_memory_gb":%s,"status":"%s","description":"%s","ts":"%s"}]' \
-  "$SHA" "$V" "$M" "$STATUS" "$DESC" "$TS" > /tmp/row.json
-hops fg insert "autoresearch_experiments_${TAG}" --file /tmp/row.json 2>&1 | grep -iE "inserted|error" || true
+# Insert via the SDK (the CLI cannot build a timestamp column from JSON).
+python autoresearch/log_row.py "$SHA" "$V" "$M" "$STATUS" "$DESC" "$TS" 2>&1 \
+  | grep -iE "inserted|error" || true
 
 if [ "$STATUS" = "keep" ]; then
   hops model register "autoresearch_${TAG}" autoresearch/model \

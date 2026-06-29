@@ -10,3 +10,5 @@ logs-job-*
 autoresearch/data_cache.parquet
 autoresearch/run.log
 autoresearch/model/
+data/repos_text.jsonl
+data/add_text.log
