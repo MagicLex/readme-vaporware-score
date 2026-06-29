@@ -9,8 +9,6 @@ import os
 import sys
 from pathlib import Path
 
-import joblib
-import pandas as pd
 import requests
 import streamlit as st
 
@@ -23,27 +21,18 @@ for cand in (HERE, HERE.parent):
         break
 from readme_features import extract  # noqa: E402
 
-MODEL_NAME = "vaporware_score"
+DEPLOYMENT_NAME = "vaporwaretext"
 
 st.set_page_config(page_title="README Vaporware Score", page_icon="🚀", layout="centered")
 
 
 @st.cache_resource
-def load_model():
-    """Download the model from the Hopsworks registry; fall back to a local
-    artifact when running outside the cluster."""
-    try:
-        import hopsworks
-        project = hopsworks.login()
-        mr = project.get_model_registry()
-        m = mr.get_model(MODEL_NAME)
-        d = m.download()
-        return joblib.load(Path(d) / "model.joblib")
-    except Exception as e:
-        local = HERE.parent / "models" / "artifact" / "model.joblib"
-        if local.exists():
-            return joblib.load(local)
-        raise RuntimeError(f"could not load model: {e}")
+def get_deployment():
+    """Handle to the served text model (TF-IDF word+char + counts). The heavy
+    model runs on its own KServe predictor; the app just sends the README text."""
+    import hopsworks
+    project = hopsworks.login()
+    return project.get_model_serving().get_deployment(DEPLOYMENT_NAME)
 
 
 def fetch_readme(url: str) -> str:
@@ -61,8 +50,6 @@ def fetch_readme(url: str) -> str:
     r.raise_for_status()
     return base64.b64decode(r.json()["content"]).decode("utf-8", "ignore")
 
-
-model = load_model()
 
 st.title("🚀 README Vaporware Score")
 st.caption("How much does your README *read* like a project that gets "
@@ -85,10 +72,14 @@ with tab_url:
             st.error(f"fetch failed: {e}")
 
 if st.button("Score it", type="primary") and readme.strip():
-    feats = extract(readme)
-    cols = list(model.feature_names_in_)  # the model's own feature order
-    X = pd.DataFrame([[feats[c] for c in cols]], columns=cols)
-    score = float(model.predict_proba(X)[0, 1]) * 100
+    dep = get_deployment()
+    if dep is None or not dep.is_running():
+        st.warning("Scorer is starting up. Try again in a moment.")
+        st.stop()
+    with st.spinner("Scoring..."):
+        res = dep.predict(inputs=[readme])
+    score = float(res["predictions"][0])
+    feats = extract(readme)  # local, only for the breakdown below
 
     st.metric("Vaporware score", f"{score:.0f} / 100")
     st.progress(min(int(score), 100))

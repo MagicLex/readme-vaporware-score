@@ -51,11 +51,18 @@ with the raw README markdown stored ([`collect/add_text.py`](../collect/add_text
 then the model adds TF-IDF n-gram features over the text alongside the counts,
 fit per fold inside the sklearn pipeline (no leakage).
 
-Status: running. Results land here when the run completes.
-
 | step | val_metric (CV) | decision |
 |---|---:|---|
-| TF-IDF (1,2)-gram + counts | _pending_ | |
+| TF-IDF word(1,2) + counts -> LogReg | 0.7462 | keep |
+| + char_wb(3,5) n-grams | **0.7624** | keep (best) |
+
+The words carry far more signal than the structure. Word TF-IDF alone jumps to
+**0.7462** (fold std 0.009, much steadier than the count models). Adding
+character n-grams (which catch emoji, URLs, and code fragments the word tokenizer
+splits away) reaches **0.7624**, at the cost of a 60k-feature model that trains in
+~6 min. The word+char model is deployed as a served endpoint (see
+[`serving/`](../serving/)) rather than loaded in the app, so its size does not
+slow the scorer.
 
 ## Head to head, same protocol
 
@@ -67,8 +74,10 @@ identically, the optimized model wins both ways:
 | 5-fold CV mean | 0.5970 | 0.6164 |
 | single seeded 80/20 | 0.5914 | 0.6125 |
 
-The gain is real but small (about +0.02). With count features alone, ~0.62 is the
-ceiling. Approach 2 is where a larger jump, if any, has to come from.
+Within count features the gain is real but small (about +0.02), and ~0.62 is the
+ceiling. The large jump came from Approach 2: reading the actual README text
+takes the model from **0.62 to 0.76**. The structure of a README (badges, emoji,
+headings) barely predicts abandonment; the words do.
 
 ## Files
 
