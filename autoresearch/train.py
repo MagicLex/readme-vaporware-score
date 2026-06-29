@@ -19,24 +19,30 @@ import numpy as np
 import pandas as pd
 
 # ============================ EXPERIMENT (edit me) ============================
-EXP_DESC = "LogReg + log1p + StandardScaler (C tuned via CV)"
+EXP_DESC = "soft-vote XGB + RF + LogReg (log1p)"
 
 
 def engineer_features(X: pd.DataFrame) -> pd.DataFrame:
     """Transform the raw README feature frame. Return a numeric DataFrame."""
-    return np.log1p(X)  # counts are heavy-tailed; log helps linear models
+    return np.log1p(X)  # harmless for trees (monotonic), helps the linear member
 
 
 def build_model():
     """Return an unfitted sklearn-compatible estimator with predict_proba."""
+    from sklearn.ensemble import VotingClassifier, RandomForestClassifier
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
-    from sklearn.linear_model import LogisticRegressionCV
-    return make_pipeline(
-        StandardScaler(),
-        LogisticRegressionCV(Cs=10, cv=5, scoring="roc_auc",
-                             max_iter=2000, random_state=42),
-    )
+    from sklearn.linear_model import LogisticRegression
+    from xgboost import XGBClassifier
+    xgb = XGBClassifier(n_estimators=400, max_depth=3, learning_rate=0.03,
+                        subsample=0.8, colsample_bytree=0.8, reg_lambda=1.0,
+                        eval_metric="logloss", random_state=42, n_jobs=-1)
+    rf = RandomForestClassifier(n_estimators=500, max_depth=None,
+                                min_samples_leaf=5, random_state=42, n_jobs=-1)
+    lr = make_pipeline(StandardScaler(),
+                       LogisticRegression(C=0.5, max_iter=2000, random_state=42))
+    return VotingClassifier([("xgb", xgb), ("rf", rf), ("lr", lr)],
+                            voting="soft", weights=[2, 1, 2], n_jobs=-1)
 # ========================== end experiment section ===========================
 
 
