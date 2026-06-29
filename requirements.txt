@@ -1,0 +1,9 @@
+hopsworks~=5.0
+scikit-learn==1.8.0
+pandas
+numpy
+matplotlib
+joblib
+requests
+streamlit
+tabulate

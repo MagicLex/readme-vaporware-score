@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.env
+models/artifact/
+models/registry_dl/
+data/collect.log
+.ipynb_checkpoints/
+
+logs-job-*

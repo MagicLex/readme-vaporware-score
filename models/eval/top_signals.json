@@ -1,0 +1,17 @@
+{
+  "readme_chars": 0.0403,
+  "has_contributing": 0.0192,
+  "list_item_count": 0.0171,
+  "heading_count": 0.011,
+  "badge_count": 0.011,
+  "readme_words": 0.0098,
+  "inline_code_count": 0.0098,
+  "uppercase_word_count": 0.0088,
+  "has_usage_section": 0.0064,
+  "readme_lines": 0.0051,
+  "image_count": 0.0043,
+  "wip_marker_count": 0.0042,
+  "emoji_count": 0.0035,
+  "code_fence_blocks": 0.0026,
+  "has_install_section": 0.0019
+}

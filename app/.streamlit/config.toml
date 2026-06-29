@@ -1,0 +1,16 @@
+[server]
+# REQUIRED on HopsFS/FUSE: the file watcher stats the script over FUSE on the
+# event loop and blocks the readiness probe, making the app flap. Turn it off.
+fileWatcherType = "none"
+headless = true
+runOnSave = false
+
+[browser]
+gatherUsageStats = false
+
+[theme]
+primaryColor = "#1EB182"
+backgroundColor = "#0E1117"
+secondaryBackgroundColor = "#1A1F2B"
+textColor = "#FAFAFA"
+font = "sans serif"
