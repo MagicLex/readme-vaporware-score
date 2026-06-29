@@ -77,7 +77,7 @@ if st.button("Score it", type="primary") and readme.strip():
         st.warning("Scorer is starting up. Try again in a moment.")
         st.stop()
     with st.spinner("Scoring..."):
-        res = dep.predict(inputs=[readme])
+        res = dep.predict(inputs=[{"readme": readme}])
     score = float(res["predictions"][0])
     feats = extract(readme)  # local, only for the breakdown below
 
@@ -107,6 +107,7 @@ if st.button("Score it", type="primary") and readme.strip():
         st.json(feats)
 
 st.divider()
-st.caption("Label = GitHub `archived` flag (proxy for abandonment). Model sees "
-           "README features only, never stars or the archived flag. Built on "
-           "Hopsworks.")
+st.caption("Label = GitHub `archived` flag (proxy for abandonment). The model "
+           "reads the README text (TF-IDF) plus structure features, never stars "
+           "or the archived flag. Served on a Hopsworks KServe endpoint; "
+           "ROC-AUC 0.76.")

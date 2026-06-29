@@ -1,0 +1,10 @@
+2026-06-29 11:12:23,953 INFO: Python Engine initialized.
+
+Logged in to project, explore it here https://eu-west.cloud.hopsworks.ai/p/33923
+Deployment created, explore it at https://eu-west.cloud.hopsworks.ai/p/33923/deployments/10251
+Before making predictions, start the deployment by using `.start()`
+  0%|          | 0/5 [00:00<?, ?it/s]Creating deployment:   0%|          | 0/5 [00:00<?, ?it/s]Creating deployment:  40%|████      | 2/5 [00:06<00:09,  3.01s/it]Initializing deployment:  40%|████      | 2/5 [00:06<00:09,  3.01s/it]Initializing deployment:  40%|████      | 2/5 [00:11<00:09,  3.01s/it]Initializing deployment:  80%|████████  | 4/5 [00:16<00:04,  4.35s/it]Deployment is starting:  80%|████████  | 4/5 [00:16<00:04,  4.35s/it] Deployment is starting:  80%|████████  | 4/5 [00:21<00:04,  4.35s/it]Deployment is starting: 100%|██████████| 5/5 [00:27<00:00,  6.15s/it]Deployment is ready: 100%|██████████| 5/5 [00:27<00:00,  6.15s/it]   Deployment is ready: 100%|██████████| 5/5 [00:27<00:00,  5.41s/it]
+Start making predictions by using `.predict()`
+running: True
+inference_url: http://10.3.202.68:80/v1/createnew/vaporwaretext/v1/models/vaporwaretext:predict
+2026-06-29 11:12:53,903 INFO: Connection closed.
