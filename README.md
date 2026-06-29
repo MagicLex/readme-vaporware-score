@@ -91,19 +91,27 @@ feature order in `feature_names_in_`, so there is no training/serving skew.
 
 ## Reproduce
 
-Needs a Hopsworks project and `gh auth login` for the GitHub API (5000 req/hour
-authenticated; the collector is rate-limit aware and resumable).
+Clone this repo into a Hopsworks project (any personal project works; the FUSE
+mount at `/hopsfs/...` is where it should live so the job and app deploy steps
+can find it). Inside a Hopsworks terminal, `hops` and `hopsworks.login()`
+authenticate automatically. For `make collect` you also need `gh auth login`
+(5000 req/hour authenticated; the collector is rate-limit aware and resumable).
 
 ```bash
-make collect    # pull ~3600 labelled repos -> data/repos.jsonl
-make features    # load into the readme_vaporware_features feature group (job)
-make eda         # correlations + plots -> models/eda/
-make train       # feature view -> train -> register vaporware_score (job)
-make app         # run the scorer locally
+make collect      # pull ~3600 labelled repos -> data/repos.jsonl  (needs gh auth)
+make features     # upload data + load the feature group           (Hopsworks job)
+make eda          # correlations + plots -> models/eda/             (local)
+make train        # feature view -> train -> register model        (Hopsworks job)
+make app          # run the scorer locally
+make deploy-app   # build the app env (first run, few min) + deploy as a Hopsworks app
 ```
 
-The dataset (`data/repos.jsonl`) is committed so you can skip `make collect` and
-go straight to EDA and training.
+The dataset (`data/repos.jsonl`) is committed, so you can skip `make collect`
+and go straight to `make features`. Everything uses the standard Hopsworks base
+environments (`python-feature-pipeline`, `pandas-training-pipeline`,
+`python-app-pipeline`), and `make deploy-app` clones the last one and pins the
+model's exact library versions for you. No names are hardcoded to one user or
+project.
 
 ## The scorer
 

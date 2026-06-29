@@ -1,4 +1,5 @@
-PY := /srv/hops/venv/bin/python
+# Hopsworks terminals have python on PATH. Override with `make PY=/path/to/python <target>`.
+PY := python
 
 .PHONY: collect features eda train sync-app app deploy-app clean
 
@@ -6,7 +7,8 @@ collect:          ## Pull labelled README dataset from GitHub (needs gh auth)
 	$(PY) collect/collect.py
 
 features:         ## Load dataset into the feature group (Hopsworks job)
-	hops files upload data/repos.jsonl Resources/vaporware/ --overwrite || true
+	-hops files mkdir Resources/vaporware
+	hops files upload data/repos.jsonl Resources/vaporware/ --overwrite
 	hops job deploy vaporware-features pipelines/feature_pipeline.py \
 		--env python-feature-pipeline --run --wait --overwrite
 
